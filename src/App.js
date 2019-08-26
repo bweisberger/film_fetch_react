@@ -3,6 +3,7 @@ import './App.css';
 import { Route, Switch } from 'react-router-dom';
 import MovieSearch from './components/MovieSearch'
 import MovieList from './components/MovieList'
+import PageHeader from './components/PageHeader'
 
 const My404 = () =>{
   return(
@@ -16,7 +17,8 @@ class App extends Component {
   constructor(){
     super();
     this.state = {
-      movies: []
+      movies: [],
+      logged: false,
     }
   }
   findMovies = async (title) =>{
@@ -51,12 +53,25 @@ class App extends Component {
       return err;
     }
   }
+
+  handleLogin(e){
+
+  }
+
+  handleRegister(e){
+
+  }
+
   render(){
     return (
       <div className="App">
+        <PageHeader handleLogin={this.handleLogin} handleRegister={this.handleRegister}/>
+          {/* <Route exact path='/register' component={Register}/> */}
         <MovieSearch findMovies={this.findMovies}/>
         <MovieList movies={this.state.movies}/>
+        {/* </Switch> */}
       </div>
+      
     );
   }
 }

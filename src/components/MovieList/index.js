@@ -9,7 +9,7 @@ const MovieList = (props) =>{
                 return(
                     <Grid.Column>
                         <Card key={location.id} style={{overflow: 'hidden'}}>
-                            <Card.Content >
+                            <Card.Content className="movie-card">
                                 <Card.Header style={{fontSize: "24pt"}}>{result.name}</Card.Header>
                                 {/* <Card.Meta>
                                     <span className='data'
@@ -39,7 +39,7 @@ const MovieList = (props) =>{
         
     
     return(
-        <Grid style={{margin:'10px'}}centered stackable columns={3}>
+        <Grid centered stackable columns={4}>
             {movieMap}
         </Grid> 
     )
