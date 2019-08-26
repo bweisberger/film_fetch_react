@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
 import { Route, Switch } from 'react-router-dom';
-import MovieSearch from './components/MovieSearch'
 import MovieList from './components/MovieList'
 import PageHeader from './components/PageHeader'
+import Profile from './components/Profile'
+import Feed from './components/Feed'
+import RegisterFailed from './components/RegisterFailed'
+import RegisterPassed from './components/RegisterPassed'
 
 const My404 = () =>{
   return(
@@ -18,7 +21,11 @@ class App extends Component {
     super();
     this.state = {
       movies: [],
+      username: '',
+      email: '',
+      image: '',
       logged: false,
+      loading: true
     }
   }
   findMovies = async (title) =>{
@@ -54,23 +61,74 @@ class App extends Component {
     }
   }
 
-  handleLogin(e){
+  handleLogin = async (loginData) =>{
+    try{
+      const loginResponse = await fetch('http://localhost:8000/user/v1/login', {
+        method: 'POST',
+        credential: 'include',
+        body: JSON.stringify(loginData),
+        header: {
+          'Content-Type': 'application/json'
+        }
+      })
 
+      const parsedResponse = await loginResponse.json();
+
+      this.setState(() => {
+        return {
+          ...parsedResponse.data,
+          loading: false 
+        }
+      })
+
+      return parsedResponse
+
+    } catch (err) {
+      console.log(err)
+    }
   }
 
-  handleRegister(e){
+  handleRegister = async (data) => {
+    try {
 
+      const registerResponse = await fetch('http://localhost:8000/user/v1/register', {
+        method: 'POST',
+        credentials: 'include',
+        body: data,
+        header: {
+          'enctype': 'multipart/form-data'
+        }
+      })
+
+      const parsedResponse = await registerResponse.json();
+
+      console.log(parsedResponse, "parsedResponse in handleRegister in app.js")
+
+      this.setState({
+        ...parsedResponse.data,
+        loading: false
+      })
+
+      return parsedResponse;
+
+    } catch(err) {
+      console.log(err)
+    }
   }
 
   render(){
     return (
-      <div className="App">
-        <PageHeader handleLogin={this.handleLogin} handleRegister={this.handleRegister}/>
-          {/* <Route exact path='/register' component={Register}/> */}
-        <MovieSearch findMovies={this.findMovies}/>
+      <main className="App">
+        <PageHeader findMovies={this.findMovies} handleLogin={this.handleLogin} handleRegister={this.handleRegister}/>
+        <Switch>
+          <Route exact path='/profile' render={(props) => <Profile {...props} userInfo={this.state} /> }/>
+          <Route exact path='/feed' render={(props) => <Feed {...props} />}/>
+          <Route exact path='/register-failed' render={(props) => <RegisterFailed {...props} handleRegister={this.handleRegister}/>}/>
+          <Route exact path='/success' render={(props) => <RegisterPassed {...props} />}/>
+          <Route component={My404}/>
+        </Switch>
         <MovieList movies={this.state.movies}/>
-        {/* </Switch> */}
-      </div>
+      </main>
       
     );
   }

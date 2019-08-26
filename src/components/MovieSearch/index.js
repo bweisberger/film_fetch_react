@@ -31,8 +31,8 @@ class MovieSearch extends Component{
         return(
             <div>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input type='text' name='title' value={this.state.title}fluid size='massive' icon='search' placeholder="Search movies or shows" onChange={this.handleChange} onClick={this.handleClick}/>
-                    <Button type='submit'>Search</Button>
+                    <Form.Input action={{ icon: 'search'}}type='text' name='title' value={this.state.title} fluid style={{minWidth: '75vw'}} size='small' placeholder="Search movies or shows" onChange={this.handleChange} onClick={this.handleClick}/>
+                    {/* <Button type='submit'>Search</Button> */}
                 </Form>
                 
             </div>

@@ -6,15 +6,27 @@ class Login extends Component{
     constructor(){
         super()
         this.state = {
+            email: '',
+            password: ''
         }
     }
     handleChange = (e) => {
-        if(e.target.name !== 'image'){
-            this.setState({[e.currentTarget.name]: e.currentTarget.value})
-        } else {
-            console.log(e.target.files[0])
-            this.setState({image: e.target.files[0]});
-        }
+        this.setState({[e.currentTarget.name]: e.currentTarget.value})
+    }
+    handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const login = this.props.handleLogin(this.state);
+
+        login.then((data) => {
+            if(data.status.message === 'Success'){
+                this.props.history.push('/profile');
+            } else {
+                console.log(data, this.props)
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
     }
     render(){
         return(
@@ -25,7 +37,7 @@ class Login extends Component{
                 <Modal.Content>
                     <Modal.Description>
                         <Header>Log in</Header>
-                        <Form onSubmit={this.handleLogin}>
+                        <Form onSubmit={this.props.handleLogin}>
                             <Label>Email Address</Label>
                             <Form.Input name='email' value={this.state.email} type='email' placeholder='Enter your email address' onChange={this.handleChange}/>
                             <Label>Password</Label>
