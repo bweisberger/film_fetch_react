@@ -40,7 +40,7 @@ class App extends Component {
     title = words.join('+')
     console.log(title)
     try{
-      const url = await process.env.production.REACT_APP_BACKEND_URL+'/watch/v1/search/'+title
+      const url = await process.env.REACT_APP_BACKEND_URL+'/watch/v1/search/'+title
       // console.log(url)
       // const req = new Request(url);
       const movies = await fetch(url , {
@@ -72,7 +72,7 @@ class App extends Component {
   handleLogin = async (loginData) =>{
     console.log(loginData, "<---in handleLogin, in App.js")
     try{
-      const loginResponse = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/login', {
+      const loginResponse = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/login', {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(loginData),
@@ -101,7 +101,7 @@ class App extends Component {
   handleRegister = async (data) => {
     try {
 
-      const registerResponse = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/register', {
+      const registerResponse = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/register', {
         method: 'POST',
         credentials: 'include',
         body: data,
@@ -129,7 +129,7 @@ class App extends Component {
 
   searchUser = async(name) => {
     try {
-      const foundUser = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/search/'+name, {
+      const foundUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/search/'+name, {
         method: 'GET',
         credentials: 'include'
       })
@@ -144,7 +144,7 @@ class App extends Component {
   updateUser = async (name, data) => {
     if(this.state.logged){
       try{
-        const updatedUser = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/'+name, {
+        const updatedUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name, {
           method: 'PUT',
           credentials: 'include',
           body: data,
@@ -173,7 +173,7 @@ class App extends Component {
   deleteUser = async (name) => {
     if(this.state.logged){
       try{
-        const deletedUser = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/'+name, {
+        const deletedUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name, {
           method: 'DELETE',
           credentials: 'include'
         })
@@ -200,7 +200,7 @@ class App extends Component {
   }
   handleLogout = async () => {
     try{
-      const logoutUser = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/logout', {
+      const logoutUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/logout', {
         method: 'GET',
         credentials: 'include'
       })
@@ -227,7 +227,7 @@ class App extends Component {
 
   getUsers = async () => {
     try {
-      const allUsers = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/', {
+      const allUsers = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/', {
         method: 'GET',
         credentials: 'include'
       })
@@ -242,7 +242,7 @@ class App extends Component {
 
   getHistory = async (name) => {
     try {
-      const historyResponse = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/user/v1/'+name+'/history', {
+      const historyResponse = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name+'/history', {
         method: 'GET',
         credentials: 'include'
       })
@@ -263,7 +263,7 @@ class App extends Component {
       lastWatched: title
     })
     try {
-      const historyResponse = await fetch(process.env.production.REACT_APP_BACKEND_URL+'/watch/v1/'+title+'/us/'+id, {
+      const historyResponse = await fetch(process.env.REACT_APP_BACKEND_URL+'/watch/v1/'+title+'/us/'+id, {
         method: 'GET',
         credentials: 'include',
       })
