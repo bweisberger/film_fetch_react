@@ -1,4 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import UserList from '../UserList';
+import { Header } from 'semantic-ui-react'
 
 
 class Feed extends Component{
@@ -8,13 +10,16 @@ class Feed extends Component{
 
         }
     }
+    
     render(){
+        console.log(this.props.users, '<----this.props.users in Feed')
         return(
             <div>
-                Feed
+                <Header>Home</Header>
+                <UserList users={this.props.users} searchUser={this.props.searchUser}/>  
             </div>
         )
     }
 }
 
-export default Feed
+export default Feed;

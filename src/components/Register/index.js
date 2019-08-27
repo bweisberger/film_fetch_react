@@ -58,7 +58,7 @@ class Register extends Component{
                 // open = {this.state.modalOpen}
                 trigger={this.props.trigger}
                 // onClose={this.handleClose}
-                actions={['Snooze', { key: 'done', content: 'Done', positive: true }]}
+                // actions={['Snooze', { key: 'done', content: 'Done', positive: true }]}
                 >
                 <Modal.Header>Create an account</Modal.Header>
                 <Modal.Content>

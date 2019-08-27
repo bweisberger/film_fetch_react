@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Grid, Header, Card } from 'semantic-ui-react'
+import HistoryList from '../HistoryList'
 
 
 class Profile extends Component{
@@ -21,15 +22,16 @@ class Profile extends Component{
                         {this.props.userInfo.loading ? 'Loading...' :
                             <Card
                                 image={'http://localhost:8000/profile_pics/' + this.props.userInfo.image}
-                                header={this.props.username}
-                                meta={this.props.email}
+                                header={this.props.userInfo.username}
+                                meta={this.props.userInfo.email}
                                 style={{marginLeft: '5vw'}}
                             /> 
                         }
                     </Grid.Column>
                     <Grid.Column width={8}>
                         <Header as='h2' textAlign='center'>
-                            {this.props.userInfo.username}'s Watch History'
+                            {this.props.userInfo.username}'s Watch History
+                            <HistoryList userHistory={this.props.userHistory}/>
                         </Header>
                     </Grid.Column>
                 </Grid.Row>

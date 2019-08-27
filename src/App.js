@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Route, Switch } from 'react-router-dom';
+import { withRouter, Route, Switch } from 'react-router-dom';
+import { Grid } from 'semantic-ui-react'
 import MovieList from './components/MovieList'
 import PageHeader from './components/PageHeader'
 import Profile from './components/Profile'
 import Feed from './components/Feed'
 import RegisterFailed from './components/RegisterFailed'
 import RegisterPassed from './components/RegisterPassed'
+import LoginFailed from './components/LoginFailed'
+import LoginSuccess from './components/LoginSuccess'
+// import { addSyntheticLeadingComment } from 'typescript';
 
 const My404 = () =>{
   return(
@@ -20,7 +24,10 @@ class App extends Component {
   constructor(){
     super();
     this.state = {
+      users: [],
+      userHistory: [],
       movies: [],
+      lastWatched: '',
       username: '',
       email: '',
       image: '',
@@ -47,6 +54,7 @@ class App extends Component {
           movies: [...parsedMovies.data.results]
         })
         console.log(this.state.movies);
+      this.props.history.push('/search')
       } else if (parsedMovies.status.code === 200){
         console.log('No movies or shows found with that title')
         return ("No results")
@@ -62,26 +70,28 @@ class App extends Component {
   }
 
   handleLogin = async (loginData) =>{
+    console.log(loginData, "<---in handleLogin, in App.js")
     try{
       const loginResponse = await fetch('http://localhost:8000/user/v1/login', {
         method: 'POST',
-        credential: 'include',
+        credentials: 'include',
         body: JSON.stringify(loginData),
-        header: {
+        headers: {
           'Content-Type': 'application/json'
         }
       })
 
       const parsedResponse = await loginResponse.json();
-
+      console.log(parsedResponse, "<----parsedResponse in handleLogin, app.js");
       this.setState(() => {
         return {
           ...parsedResponse.data,
-          loading: false 
+          loading: false,
+          logged: true
         }
       })
-
-      return parsedResponse
+    
+      return parsedResponse;
 
     } catch (err) {
       console.log(err)
@@ -95,7 +105,7 @@ class App extends Component {
         method: 'POST',
         credentials: 'include',
         body: data,
-        header: {
+        headers: {
           'enctype': 'multipart/form-data'
         }
       })
@@ -106,7 +116,8 @@ class App extends Component {
 
       this.setState({
         ...parsedResponse.data,
-        loading: false
+        loading: false,
+        logged: true
       })
 
       return parsedResponse;
@@ -116,22 +127,189 @@ class App extends Component {
     }
   }
 
+  searchUser = async(name) => {
+    try {
+      const foundUser = await fetch('http://localhost:8000/user/v1/search/'+name, {
+        method: 'GET',
+        credentials: 'include'
+      })
+      const parsedFoundUser = await foundUser.json();
+      console.log(parsedFoundUser, '<--parsedFoundUser');
+      return parsedFoundUser.data;
+    } catch(err){
+      console.log(err)
+    }
+  }
+
+  updateUser = async (name, data) => {
+    if(this.state.logged){
+      try{
+        const updatedUser = await fetch('http://localhost:8000/user/v1/'+name, {
+          method: 'PUT',
+          credentials: 'include',
+          body: data,
+          headers: {
+            'enctype': 'multipart/form-data'
+          }
+        })
+  
+        const parsedUpdate = await updatedUser.json();
+        console.log(parsedUpdate, 'parsedUpdate in updateUser in app.js')
+  
+        this.setState({
+          ...parsedUpdate.data,
+          loading: false,
+          logged: true
+        })
+        return parsedUpdate
+      } catch(err){
+        console.log(err)
+      }
+    } else {
+      console.log('this.state.logged, ', this.state.logged)
+    }
+  }
+
+  deleteUser = async (name) => {
+    if(this.state.logged){
+      try{
+        const deletedUser = await fetch('http://localhost:8000/user/v1/'+name, {
+          method: 'DELETE',
+          credentials: 'include'
+        })
+        const parsedUser = await deletedUser.json();
+        console.log(parsedUser, '<---parsedUsers in deleteUser in app.js')
+        this.setState({
+          userHistory: [],
+          username: '',
+          email: '',
+          image: '',
+          logged: false,
+          loading: true
+        })
+        return
+      } catch(err){
+        console.log(err)
+        return err
+      }
+    } else {
+      console.log(this.state.logged, "<--this.state.logged in app.js")
+      return 
+    }
+    
+  }
+  handleLogout = async () => {
+    try{
+      const logoutUser = await fetch('http://localhost:8000/user/v1/logout', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      const parsedLogout = await logoutUser.json();
+      console.log(parsedLogout, '<--parsedLogout in app.js')
+      if (parsedLogout.status.code === 200){
+        this.props.history.push('/feed')
+      }
+      this.setState({
+        userHistory: [],
+        username: '',
+        email: '',
+        image: '',
+        logged: false,
+        loading: true
+      })
+      return parsedLogout;
+      
+    } catch(err){
+      console.log(err)
+      return err;
+    }
+  }
+
+  getUsers = async () => {
+    try {
+      const allUsers = await fetch('http://localhost:8000/user/v1/', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      const parsedUsers = await allUsers.json()
+      console.log(parsedUsers, "<---parsedUsers in getUsers in app.js")
+      return parsedUsers.data;
+    } catch(err){
+      console.log(err)
+      return err
+    }
+  }
+
+  getHistory = async (name) => {
+    try {
+      const historyResponse = await fetch('http://localhost:8000/user/v1/'+name+'/history', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      const parsedResponse = await historyResponse.json();
+      console.log(parsedResponse, '<---parsedResponse in getHistory in app.js')
+      this.setState({
+          history: [...parsedResponse.data]
+      })
+      return parsedResponse.data;
+
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
+  addHistory = async (title, id) => {
+    this.setState({
+      lastWatched: title
+    })
+    try {
+      const historyResponse = await fetch('http://localhost:8000/watch/v1/'+title+'/us/'+id, {
+        method: 'GET',
+        credentials: 'include',
+      })
+      const parsedResponse = await historyResponse.json();
+      console.log(parsedResponse, '<--parsedResponse in addHistory in app.js')
+      return parsedResponse.data;
+
+    } catch(err){
+      console.log(err)
+
+    }
+  }
+
+  componentDidMount = async() => {
+    const users = await this.getUsers()
+    console.log(users, "<----users in componentDidMount")
+    this.setState({
+      users: [...users]
+    })
+  }
+
   render(){
     return (
-      <main className="App">
+
+      <Grid className="App">
         <PageHeader findMovies={this.findMovies} handleLogin={this.handleLogin} handleRegister={this.handleRegister}/>
-        <Switch>
-          <Route exact path='/profile' render={(props) => <Profile {...props} userInfo={this.state} /> }/>
-          <Route exact path='/feed' render={(props) => <Feed {...props} />}/>
-          <Route exact path='/register-failed' render={(props) => <RegisterFailed {...props} handleRegister={this.handleRegister}/>}/>
-          <Route exact path='/success' render={(props) => <RegisterPassed {...props} />}/>
-          <Route component={My404}/>
-        </Switch>
-        <MovieList movies={this.state.movies}/>
-      </main>
+        <Grid.Row columns={12}>
+          <Grid.Column></Grid.Column>
+          <Grid.Column width={10} centered>
+            <Switch>
+              <Route exact path='/profile' render={(props) => <Profile {...props} userInfo={this.state} userHistory={this.state.userHistory} /> }/>
+              <Route exact path='/' render={(props) => <Feed {...props} users={this.state.users} searchUser={this.searchUser}/>}/>
+              <Route exact path='/register-failed' render={(props) => <RegisterFailed {...props} handleRegister={this.handleRegister}/>}/>
+              <Route exact path='/success' render={(props) => <RegisterPassed {...props} />}/>
+              <Route exact path='/login-failed' render={(props) => <LoginFailed {...props} handleRegister={this.handleRegister} handleLogin={this.handleLogin}/>}/>
+              <Route exact path='/login-success' render={(props) => <LoginSuccess {...props} />}/>
+              <Route exact path = '/search' render={(props) => <MovieList addHistory={this.addHistory} movies={this.state.movies}/>}/>
+              <Route component={My404}/>
+            </Switch>
+          </Grid.Column>
+          <Grid.Column></Grid.Column>
+        </Grid.Row>
+      </Grid>
       
     );
   }
 }
 
-export default App;
+export default withRouter(App);

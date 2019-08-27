@@ -3,7 +3,7 @@ import Login from '../Login'
 import Register from '../Register'
 import MovieSearch from '../MovieSearch'
 
-import { Menu, Grid } from 'semantic-ui-react'
+import { Menu, Grid, Image } from 'semantic-ui-react'
 
 
 class PageHeader extends Component{
@@ -41,13 +41,12 @@ class PageHeader extends Component{
         return(
             // <Grid stackable style={{margin: '0'}}>
             //     <Grid.Row>
-                    <Menu centered fluid stackable>
+                    <Menu fluid stackable>
                             <Menu.Item
-                                    name='home'
-                                    active = {activeItem === 'home'}
-                                    onClick={this.handleItemClick}
+                                    as='a'
+                                    href='/'
                                 >
-                                    Home
+                               <Image style={{maxWidth: '100px', height: 'auto', margin: '0'}}className='home-image'src='LogoMakr_9vC763.png'/> 
                             </Menu.Item>
                         {/* <Grid.Column width={10}> */}
                             <Menu.Item

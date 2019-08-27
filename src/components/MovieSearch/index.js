@@ -20,6 +20,7 @@ class MovieSearch extends Component{
     }
     handleSubmit = (e) =>{
         e.preventDefault();
+
         // console.log(this.state.title)
         this.props.findMovies(this.state.title);
         // this.setState({
@@ -31,7 +32,7 @@ class MovieSearch extends Component{
         return(
             <div>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input action={{ icon: 'search'}}type='text' name='title' value={this.state.title} fluid style={{minWidth: '75vw'}} size='small' placeholder="Search movies or shows" onChange={this.handleChange} onClick={this.handleClick}/>
+                    <Form.Input action={{ icon: 'search'}}type='text' name='title' value={this.state.title} fluid style={{minWidth: '65vw'}} size='small' placeholder="Search movies or shows" onChange={this.handleChange} onClick={this.handleClick}/>
                     {/* <Button type='submit'>Search</Button> */}
                 </Form>
                 
