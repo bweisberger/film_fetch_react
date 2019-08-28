@@ -30,7 +30,7 @@ class App extends Component {
       lastWatched: '',
       username: '',
       email: '',
-      image: '',
+      // image: '',
       logged: false,
       loading: true
     }
@@ -183,7 +183,7 @@ class App extends Component {
           userHistory: [],
           username: '',
           email: '',
-          image: '',
+          // image: '',
           logged: false,
           loading: true
         })
@@ -213,7 +213,7 @@ class App extends Component {
         userHistory: [],
         username: '',
         email: '',
-        image: '',
+        // image: '',
         logged: false,
         loading: true
       })

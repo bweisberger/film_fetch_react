@@ -5,7 +5,7 @@ const UserList = (props) => {
     const userList = props.users.map((user)=>{
             return(
                 <List.Item>
-                    <Image avatar src={'http://localhost:8000/profile_pics/'+user.image} />
+                    {/* <Image avatar src={'http://localhost:8000/profile_pics/'+user.image} /> */}
                     <List.Content>
                         <List.Header as='a' onClick={props.searchUser.bind(null, user.username)}>{user.username}</List.Header>
                         <List.Description>

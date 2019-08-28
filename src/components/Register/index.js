@@ -10,7 +10,7 @@ class Register extends Component{
             username: '',
             password: '',
             email: '',
-            image: {}
+            // image: {}
         }
     }
     // handleClose = () => {
@@ -19,18 +19,18 @@ class Register extends Component{
     //     })
     // }
     handleChange = (e) => {
-        if(e.target.name !== 'image'){
+        // if(e.target.name !== 'image'){
             this.setState({[e.currentTarget.name]: e.currentTarget.value})
-        } else {
-            console.log(e.target.files[0])
-            this.setState({image: e.target.files[0]});
-        }
+        // } else {
+            // console.log(e.target.files[0])
+            // this.setState({image: e.target.files[0]});
+        // }
     }
     handleSubmit = async (e) => {
         e.preventDefault();
 
         const data = new FormData();
-        data.append('image', this.state.image);
+        // data.append('image', this.state.image);
         data.append('username', this.state.username);
         data.append('password', this.state.password);
         data.append('email', this.state.email);
@@ -71,8 +71,8 @@ class Register extends Component{
                             <Form.Input name='username' value={this.state.username} type='text' placeholder="Enter a username" onChange={this.handleChange}/>
                             <Label>Password</Label>
                             <Form.Input name='password' value={this.state.password} type='password' placeholder='Enter your password' onChange={this.handleChange}/>
-                            <Label>Profile Picture</Label>
-                            <Form.Input name='image' type='file' onChange={this.handleChange}/>
+                            {/* <Label>Profile Picture</Label> */}
+                            {/* <Form.Input name='image' type='file' onChange={this.handleChange}/> */}
                             <Form.Input type='submit' value='Sign Up' onClick={this.handleClose}/>
                         </Form>
                     </Modal.Description>
