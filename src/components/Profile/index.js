@@ -9,7 +9,7 @@ class Profile extends Component{
         this.state = {
             id: '',
             email: '',
-            image: '',
+            // image: '',
             username: ''
         }
     }
@@ -21,7 +21,7 @@ class Profile extends Component{
                     <Grid.Column width={4}>
                         {this.props.userInfo.loading ? 'Loading...' :
                             <Card
-                                image={'http://localhost:8000/profile_pics/' + this.props.userInfo.image}
+                                // image={'http://localhost:8000/profile_pics/' + this.props.userInfo.image}
                                 header={this.props.userInfo.username}
                                 meta={this.props.userInfo.email}
                                 style={{marginLeft: '5vw'}}
