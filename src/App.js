@@ -294,7 +294,7 @@ class App extends Component {
           <Grid.Column></Grid.Column>
           <Grid.Column width={10} centered>
             <Switch>
-              <Route exact path='/profile' render={(props) => <Profile {...props} userInfo={this.state} userHistory={this.state.userHistory} /> }/>
+              <Route exact path={`/${this.state.username}`} render={(props) => <Profile {...props} userInfo={this.state} userHistory={this.state.userHistory} /> }/>
               <Route exact path='/' render={(props) => <Feed {...props} users={this.state.users} searchUser={this.searchUser}/>}/>
               <Route exact path='/register-failed' render={(props) => <RegisterFailed {...props} handleRegister={this.handleRegister}/>}/>
               <Route exact path='/success' render={(props) => <RegisterPassed {...props} />}/>
