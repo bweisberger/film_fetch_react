@@ -15,7 +15,7 @@ class PageHeader extends Component{
             username: '',
             email: '',
             password: '',
-            image: {}
+            // image: {}
         }
     }
     handleItemClick = (e, {name}) => {

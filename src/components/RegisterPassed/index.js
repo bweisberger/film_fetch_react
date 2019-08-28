@@ -13,7 +13,7 @@ class RegisterPassed extends Component{
         this.setState({
             open: false
         })
-        this.props.history.push('/profile')
+        this.props.history.push('/')
     }
     render(){
         return(
