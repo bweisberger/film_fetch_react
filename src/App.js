@@ -27,6 +27,8 @@ class App extends Component {
       users: [],
       userHistory: [],
       movies: [],
+      currentUser: {},
+      id: '',
       lastWatched: '',
       username: '',
       email: '',
@@ -83,17 +85,17 @@ class App extends Component {
 
       const parsedResponse = await loginResponse.json();
       console.log(parsedResponse, "<----parsedResponse in handleLogin, app.js");
-      this.setState(() => {
-        return {
+      if(parsedResponse.status.code === 200){
+        this.setState({
           ...parsedResponse.data,
           loading: false,
           logged: true
-        }
-      })
-    
-      return parsedResponse;
-
-    } catch (err) {
+        })
+        console.log(this.state, "this.state in handleLogin")
+      }
+      return parsedResponse
+    }
+    catch (err) {
       console.log(err)
     }
   }
@@ -113,13 +115,14 @@ class App extends Component {
       const parsedResponse = await registerResponse.json();
 
       console.log(parsedResponse, "parsedResponse in handleRegister in app.js")
-
-      this.setState({
-        ...parsedResponse.data,
-        loading: false,
-        logged: true
-      })
-
+      if(parsedResponse.status.code === 200){
+        this.setState({
+          ...parsedResponse.data,
+          loading: false,
+          logged: true
+        })
+        this.getUsers()
+      }
       return parsedResponse;
 
     } catch(err) {
@@ -127,77 +130,7 @@ class App extends Component {
     }
   }
 
-  searchUser = async(name) => {
-    try {
-      const foundUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/search/'+name, {
-        method: 'GET',
-        credentials: 'include'
-      })
-      const parsedFoundUser = await foundUser.json();
-      console.log(parsedFoundUser, '<--parsedFoundUser');
-      return parsedFoundUser.data;
-    } catch(err){
-      console.log(err)
-    }
-  }
-
-  updateUser = async (name, data) => {
-    if(this.state.logged){
-      try{
-        const updatedUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name, {
-          method: 'PUT',
-          credentials: 'include',
-          body: data,
-          headers: {
-            'enctype': 'multipart/form-data'
-          }
-        })
   
-        const parsedUpdate = await updatedUser.json();
-        console.log(parsedUpdate, 'parsedUpdate in updateUser in app.js')
-  
-        this.setState({
-          ...parsedUpdate.data,
-          loading: false,
-          logged: true
-        })
-        return parsedUpdate
-      } catch(err){
-        console.log(err)
-      }
-    } else {
-      console.log('this.state.logged, ', this.state.logged)
-    }
-  }
-
-  deleteUser = async (name) => {
-    if(this.state.logged){
-      try{
-        const deletedUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name, {
-          method: 'DELETE',
-          credentials: 'include'
-        })
-        const parsedUser = await deletedUser.json();
-        console.log(parsedUser, '<---parsedUsers in deleteUser in app.js')
-        this.setState({
-          userHistory: [],
-          username: '',
-          email: '',
-          // image: '',
-          logged: false,
-          loading: true
-        })
-        return
-      } catch(err){
-        console.log(err)
-        return err
-      }
-    } else {
-      console.log(this.state.logged, "<--this.state.logged in app.js")
-      return 
-    }
-    
-  }
   handleLogout = async () => {
     try{
       const logoutUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/logout', {
@@ -207,7 +140,7 @@ class App extends Component {
       const parsedLogout = await logoutUser.json();
       console.log(parsedLogout, '<--parsedLogout in app.js')
       if (parsedLogout.status.code === 200){
-        this.props.history.push('/feed')
+        this.props.history.push('/')
       }
       this.setState({
         userHistory: [],
@@ -232,44 +165,30 @@ class App extends Component {
         credentials: 'include'
       })
       const parsedUsers = await allUsers.json()
-      console.log(parsedUsers, "<---parsedUsers in getUsers in app.js")
-      return parsedUsers.data;
+      if (parsedUsers.data.length){
+        console.log(parsedUsers.data, "<----users in getUsers in app.js")
+        this.setState({
+          users: [...parsedUsers.data]
+        })
+      }
+      return
     } catch(err){
       console.log(err)
       return err
     }
   }
 
-  getHistory = async (name) => {
-    try {
-      const historyResponse = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name+'/history', {
-        method: 'GET',
-        credentials: 'include'
-      })
-      const parsedResponse = await historyResponse.json();
-      console.log(parsedResponse, '<---parsedResponse in getHistory in app.js')
-      this.setState({
-          history: [...parsedResponse.data]
-      })
-      return parsedResponse.data;
-
-    } catch(err) {
-      console.log(err)
-    }
-  }
-
   addHistory = async (title, id) => {
-    this.setState({
-      lastWatched: title
-    })
     try {
       const historyResponse = await fetch(process.env.REACT_APP_BACKEND_URL+'/watch/v1/'+title+'/us/'+id, {
         method: 'GET',
         credentials: 'include',
       })
       const parsedResponse = await historyResponse.json();
-      console.log(parsedResponse, '<--parsedResponse in addHistory in app.js')
-      return parsedResponse.data;
+      console.log(parsedResponse.data, '<--parsedResponse.data in addHistory in app.js')
+      this.setState({
+        userHistory: [parsedResponse.data]
+      }) 
 
     } catch(err){
       console.log(err)
@@ -277,12 +196,8 @@ class App extends Component {
     }
   }
 
-  componentDidMount = async() => {
-    const users = await this.getUsers()
-    console.log(users, "<----users in componentDidMount")
-    this.setState({
-      users: [...users]
-    })
+  componentDidMount = () => {
+    this.getUsers()
   }
 
   render(){
@@ -294,13 +209,13 @@ class App extends Component {
           <Grid.Column></Grid.Column>
           <Grid.Column width={10} centered>
             <Switch>
-              <Route exact path={`/${this.state.username}`} render={(props) => <Profile {...props} userInfo={this.state} userHistory={this.state.userHistory} /> }/>
+              <Route exact path='/profile/:name' render={(props) => <Profile {...props} getUsers={this.getUsers} users={this.state.users}/> } />
               <Route exact path='/' render={(props) => <Feed {...props} users={this.state.users} searchUser={this.searchUser}/>}/>
               <Route exact path='/register-failed' render={(props) => <RegisterFailed {...props} handleRegister={this.handleRegister}/>}/>
               <Route exact path='/success' render={(props) => <RegisterPassed {...props} />}/>
               <Route exact path='/login-failed' render={(props) => <LoginFailed {...props} handleRegister={this.handleRegister} handleLogin={this.handleLogin}/>}/>
               <Route exact path='/login-success' render={(props) => <LoginSuccess {...props} />}/>
-              <Route exact path = '/search' render={(props) => <MovieList addHistory={this.addHistory} movies={this.state.movies}/>}/>
+              <Route exact path ='/search' render={(props) => <MovieList addHistory={this.addHistory} movies={this.state.movies}/>}/>
               <Route component={My404}/>
             </Switch>
           </Grid.Column>

@@ -7,7 +7,7 @@ class Feed extends Component{
     constructor(){
         super()
         this.state = {
-
+            
         }
     }
     

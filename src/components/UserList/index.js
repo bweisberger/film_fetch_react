@@ -1,5 +1,6 @@
 import React from 'react'
-import { List, Image } from 'semantic-ui-react'
+import { List } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 const UserList = (props) => {
     const userList = props.users.map((user)=>{
@@ -7,11 +8,13 @@ const UserList = (props) => {
                 <List.Item>
                     {/* <Image avatar src={'http://localhost:8000/profile_pics/'+user.image} /> */}
                     <List.Content>
-                        <List.Header as='a' href={`/${user.username}`}>{user.username}</List.Header>
+                        <Link to={`/profile/${user.username}`}>
+                            <List.Header>{user.username}</List.Header>
+                        </Link>
                         <List.Description>
-                        Last seen watching{' '}
+                        Last seen watching{}
                         <a>
-                            <b>{user.lastWatched}</b>
+                            <b>{}</b>
                         </a>{' '}
                         just now.
                         </List.Description>

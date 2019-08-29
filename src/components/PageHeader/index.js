@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Login from '../Login'
 import Register from '../Register'
 import MovieSearch from '../MovieSearch'
+import { Link } from 'react-router-dom'
 
 import { Menu, Grid, Image } from 'semantic-ui-react'
 
@@ -20,34 +21,19 @@ class PageHeader extends Component{
     }
     handleItemClick = (e, {name}) => {
         this.setState({activeItem: name})
-        // if(e.target.name === 'login'){
-        //     this.openLoginModal()
-        // } else if( e.target.name === 'register'){
-        //     this.openRegisterModal()
-        // }
-    }   
-    // openLoginModal = () => {
-    //     this.setState({
-    //         openLogin: true
-    //     })
-    // }
-    // openRegisterModal = () => {
-    //     this.setState({
-    //         openRegiser: true
-    //     })
-    // }
+    }
     render(){
         const { activeItem } = this.state
         return(
             // <Grid stackable style={{margin: '0'}}>
             //     <Grid.Row>
                     <Menu fluid stackable>
+                        <Link to='/'>
                             <Menu.Item
-                                    as='a'
-                                    href='/'
                                 >
                                <Image style={{maxWidth: '100px', height: 'auto', margin: '0'}}className='home-image'src='LogoMakr_9vC763.png'/> 
                             </Menu.Item>
+                            </Link>
                         {/* <Grid.Column width={10}> */}
                             <Menu.Item
                                 name='search'
@@ -58,6 +44,7 @@ class PageHeader extends Component{
                                 >
                                 <MovieSearch findMovies={this.props.findMovies}/>
                             </Menu.Item>
+                        
                         {/* </Grid.Column> */}
                             
                         

@@ -1,39 +1,122 @@
 import React, { Component } from 'react'
-import { Grid, Header, Card } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 import HistoryList from '../HistoryList'
+import Edit from '../Edit'
+
 
 
 class Profile extends Component{
     constructor(){
         super()
         this.state = {
-            id: '',
-            email: '',
-            // image: '',
-            username: ''
+            user : {},
+            history : []
         }
     }
-    render(){
-        console.log(this.state, this.props.userInfo, '<---userinfo props in profile')
+    searchUser = async (name) => {
+        try {
+            const foundUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name, {
+                method: 'GET',
+                credentials: 'include'
+            })
+          const parsedFoundUser = await foundUser.json();
+          console.log(parsedFoundUser, '<--parsedFoundUser in searchUser/profile');
+          if(parsedFoundUser.status.code === 200){
+              this.setState({
+                  user: parsedFoundUser.data
+              })
+            return
+          }
+        } catch(err){
+          console.log(err)
+        }
+    }
+
+    getHistory = async (name) => {
+    try {
+        const historyResponse = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+name+'/history', {
+        method: 'GET',
+        credentials: 'include'
+        })
+        const parsedResponse = await historyResponse.json();
+        console.log(parsedResponse, '<---parsedResponse in getHistory in app.js')
+        if(parsedResponse.status.code === 200){
+        this.setState({
+            history: parsedResponse.data,
+            editModal: false
+        })
+        
+        }
+
+    } catch(err) {
+        console.log(err)
+    }
+    }
+
+    updateUser = async (id, data) => {
+    try{
+        const updatedUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+id, {
+        method: 'PUT',
+        credentials: 'include',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+        })
+
+        const parsedUpdate = await updatedUser.json();
+        console.log(parsedUpdate, 'parsedUpdate in updateUser in app.js')
+        if(parsedUpdate.status.code === 200){
+            this.setState({
+                ...parsedUpdate.data,
+                })
+            this.props.getUsers()
+        }
+        
+        return parsedUpdate
+    } catch(err){
+        console.log(err)
+    }
+    }
+    
+    deleteUser = async (id) => {
+    try{
+        const deletedUser = await fetch(process.env.REACT_APP_BACKEND_URL+'/user/v1/'+id, {
+        method: 'DELETE',
+        credentials: 'include'
+        })
+        const parsedUser = await deletedUser.json();
+        console.log(parsedUser, '<---parsedUsers in deleteUser in app.js')
+        if(parsedUser.status.code === 200){
+            this.props.getUsers()
+        }
+        return
+    } catch(err){
+        console.log(err)
+        return err
+    }
+    }
+    toggleEdit = () =>{
+        this.setState({
+            editModal: true
+        })
+    }
+    componentDidMount = () => {
+        let name = this.props.match.params.name
+        console.log(name, "<---name (this.props.match.params.name");
+        this.searchUser(name);
+        this.getHistory(name);
+    }
+    render() {
         return(
             <Grid columns={2} padded style={{ height: '100vh'}}>
                 <Grid.Row>
-                    <Grid.Column width={4}>
-                        {this.props.userInfo.loading ? 'Loading...' :
-                            <Card
-                                // image={'http://localhost:8000/profile_pics/' + this.props.userInfo.image}
-                                header={this.props.userInfo.username}
-                                meta={this.props.userInfo.email}
-                                style={{marginLeft: '5vw'}}
-                            /> 
-                        }
-                    </Grid.Column>
                     <Grid.Column width={8}>
-                        <Header as='h2' textAlign='center'>
-                            {this.props.userInfo.username}'s Watch History
-                            <HistoryList userHistory={this.props.userHistory}/>
-                        </Header>
+                        <HistoryList user={this.state.user} userHistory={this.state.history}/>
                     </Grid.Column>
+                    <Link onClick={this.toggleEdit}>Edit User</Link>
+                    {this.state.editModal ? <Edit user={this.state.user} updateUser={this.updateUser} deleteUser={this.deleteUser}/> : null }
                 </Grid.Row>
             </Grid>
 
@@ -41,4 +124,4 @@ class Profile extends Component{
     }
 }
 
-export default Profile
+export default Profile;

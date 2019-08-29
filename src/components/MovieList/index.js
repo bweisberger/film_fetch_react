@@ -16,8 +16,8 @@ const MovieList = (props) =>{
                                     <span className='data'
                                 </Card.Meta> */}
                                 <Feed>
-                                    <a onClick={props.addHistory.bind(null, result.name, location.id)} href={location.url} target="_blank">
-                                    <Feed.Event>
+                                    <a href={location.url} target="_blank">
+                                    <Feed.Event onClick={props.addHistory.bind(null, result.name, location.id)}>
                                     {console.log(location.display_name, "<----from inside locations loop return")}
                                         <Feed.Label image={location.icon}/> 
                                         <Feed.Content>
