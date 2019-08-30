@@ -7,7 +7,7 @@ class Feed extends Component{
     constructor(){
         super()
         this.state = {
-            
+
         }
     }
     
@@ -15,7 +15,7 @@ class Feed extends Component{
         console.log(this.props.users, '<----this.props.users in Feed')
         return(
             <div>
-                <Header>Home</Header>
+                <Header>Watch Feed</Header>
                 <UserList users={this.props.users} searchUser={this.props.searchUser}/>  
             </div>
         )

@@ -12,11 +12,7 @@ const UserList = (props) => {
                             <List.Header>{user.username}</List.Header>
                         </Link>
                         <List.Description>
-                        Last seen watching{}
-                        <a>
-                            <b>{}</b>
-                        </a>{' '}
-                        just now.
+                        Last seen watching something spectacular just now.
                         </List.Description>
                     </List.Content>
                 </List.Item>

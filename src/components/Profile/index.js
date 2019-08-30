@@ -113,7 +113,7 @@ class Profile extends Component{
             <Grid columns={2} padded style={{ height: '100vh'}}>
                 <Grid.Row>
                     <Grid.Column width={8}>
-                        <HistoryList user={this.state.user} userHistory={this.state.history}/>
+                        <HistoryList user={this.state.user} info={this.props.info} userHistory={this.state.history}/>
                     </Grid.Column>
                     <Link onClick={this.toggleEdit}>Edit User</Link>
                     {this.state.editModal ? <Edit user={this.state.user} updateUser={this.updateUser} deleteUser={this.deleteUser}/> : null }

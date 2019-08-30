@@ -195,22 +195,21 @@ class App extends Component {
 
     }
   }
-
   componentDidMount = () => {
     this.getUsers()
   }
-
   render(){
+    
     return (
 
       <Grid className="App">
         <PageHeader findMovies={this.findMovies} handleLogin={this.handleLogin} handleRegister={this.handleRegister}/>
         <Grid.Row columns={12}>
           <Grid.Column></Grid.Column>
-          <Grid.Column width={10} centered>
+          <Grid.Column width={12} centered>
             <Switch>
               <Route exact path='/profile/:name' render={(props) => <Profile {...props} getUsers={this.getUsers} users={this.state.users}/> } />
-              <Route exact path='/' render={(props) => <Feed {...props} users={this.state.users} searchUser={this.searchUser}/>}/>
+              <Route exact path='/' render={(props) => <Feed {...props} info={this.state} users={this.state.users} searchUser={this.searchUser}/>}/>
               <Route exact path='/register-failed' render={(props) => <RegisterFailed {...props} handleRegister={this.handleRegister}/>}/>
               <Route exact path='/success' render={(props) => <RegisterPassed {...props} />}/>
               <Route exact path='/login-failed' render={(props) => <LoginFailed {...props} handleRegister={this.handleRegister} handleLogin={this.handleLogin}/>}/>
